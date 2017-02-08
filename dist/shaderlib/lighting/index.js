@@ -1,0 +1,53 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.lighting = undefined;
+exports.updateSettings = updateSettings;
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Light settings are used in 3d mode
+var defaultLightSettings = {
+  enabled: true,
+  ambientColor: [255, 255, 255],
+  pointLightAmbientCoefficient: 0.1,
+  pointLightLocation: [40.4406, -79.9959, 1000000],
+  pointLightColor: [255, 255, 255],
+  pointLightAttenuation: 1.0,
+  materialSpecularColor: [255, 255, 255],
+  materialShininess: 1
+};
+
+function updateSettings(_ref) {
+  var settings = _ref.settings,
+      _ref$oldSettings = _ref.oldSettings,
+      oldSettings = _ref$oldSettings === undefined ? {} : _ref$oldSettings;
+
+  if (settings !== oldSettings) {
+    var lightSettings = Object.assign({}, defaultLightSettings, settings);
+    return {
+      uLightingEnabled: lightSettings.enabled,
+      uAmbientColor: lightSettings.ambientColor,
+      uPointLightAmbientCoefficient: lightSettings.pointLightAmbientCoefficient,
+      uPointLightLocation: lightSettings.pointLightLocation,
+      uPointLightColor: lightSettings.pointLightColor,
+      uPointLightAttenuation: lightSettings.pointLightAttenuation,
+      uMaterialSpecularColor: lightSettings.materialSpecularColor,
+      uMaterialShininess: lightSettings.materialShininess
+    };
+  }
+  return {};
+}
+
+var lighting = exports.lighting = {
+  interface: 'lighting',
+  source: '// LIGHTING\nuniform bool uLightingEnabled;\nuniform vec3 uAmbientColor;\nuniform float uPointLightAmbientCoefficient;\nuniform vec3 uPointLightLocation;\nuniform vec3 uPointLightColor;\nuniform float uPointLightAttenuation;\n\nuniform vec3 uMaterialSpecularColor;\nuniform float uMaterialShininess;\n\nvec3 lighting_filterColor(vec3 position_modelspace, vec3 normal_modelspace, vec3 color) {\n  if (!uLightingEnabled) {\n    return color;\n  }\n\n  vec3 pointLightLocation_modelspace = vec3(project_position(uPointLightLocation));\n  vec3 lightDirection = normalize(pointLightLocation_modelspace - position_modelspace);\n\n  vec3 ambient = uPointLightAmbientCoefficient * color * uAmbientColor / 255.0;\n\n  float diffuseCoefficient = max(dot(normal_modelspace, lightDirection), 0.0);\n  vec3 diffuse = diffuseCoefficient * uPointLightColor / 255. * color;\n\n  return ambient + uPointLightAttenuation * diffuse;\n}\n',
+  updateSettings: updateSettings
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9zaGFkZXJsaWIvbGlnaHRpbmcvaW5kZXguanMiXSwibmFtZXMiOlsidXBkYXRlU2V0dGluZ3MiLCJkZWZhdWx0TGlnaHRTZXR0aW5ncyIsImVuYWJsZWQiLCJhbWJpZW50Q29sb3IiLCJwb2ludExpZ2h0QW1iaWVudENvZWZmaWNpZW50IiwicG9pbnRMaWdodExvY2F0aW9uIiwicG9pbnRMaWdodENvbG9yIiwicG9pbnRMaWdodEF0dGVudWF0aW9uIiwibWF0ZXJpYWxTcGVjdWxhckNvbG9yIiwibWF0ZXJpYWxTaGluaW5lc3MiLCJzZXR0aW5ncyIsIm9sZFNldHRpbmdzIiwibGlnaHRTZXR0aW5ncyIsIk9iamVjdCIsImFzc2lnbiIsInVMaWdodGluZ0VuYWJsZWQiLCJ1QW1iaWVudENvbG9yIiwidVBvaW50TGlnaHRBbWJpZW50Q29lZmZpY2llbnQiLCJ1UG9pbnRMaWdodExvY2F0aW9uIiwidVBvaW50TGlnaHRDb2xvciIsInVQb2ludExpZ2h0QXR0ZW51YXRpb24iLCJ1TWF0ZXJpYWxTcGVjdWxhckNvbG9yIiwidU1hdGVyaWFsU2hpbmluZXNzIiwibGlnaHRpbmciLCJpbnRlcmZhY2UiLCJzb3VyY2UiXSwibWFwcGluZ3MiOiI7Ozs7OztRQWVnQkEsYyxHQUFBQSxjOztBQWRoQjs7Ozs7O0FBRUE7QUFDQSxJQUFNQyx1QkFBdUI7QUFDM0JDLFdBQVMsSUFEa0I7QUFFM0JDLGdCQUFjLENBQUMsR0FBRCxFQUFNLEdBQU4sRUFBVyxHQUFYLENBRmE7QUFHM0JDLGdDQUE4QixHQUhIO0FBSTNCQyxzQkFBb0IsQ0FBQyxPQUFELEVBQVUsQ0FBQyxPQUFYLEVBQW9CLE9BQXBCLENBSk87QUFLM0JDLG1CQUFpQixDQUFDLEdBQUQsRUFBTSxHQUFOLEVBQVcsR0FBWCxDQUxVO0FBTTNCQyx5QkFBdUIsR0FOSTtBQU8zQkMseUJBQXVCLENBQUMsR0FBRCxFQUFNLEdBQU4sRUFBVyxHQUFYLENBUEk7QUFRM0JDLHFCQUFtQjtBQVJRLENBQTdCOztBQVdPLFNBQVNULGNBQVQsT0FBc0Q7QUFBQSxNQUE3QlUsUUFBNkIsUUFBN0JBLFFBQTZCO0FBQUEsOEJBQW5CQyxXQUFtQjtBQUFBLE1BQW5CQSxXQUFtQixvQ0FBTCxFQUFLOztBQUMzRCxNQUFJRCxhQUFhQyxXQUFqQixFQUE4QjtBQUM1QixRQUFNQyxnQkFBZ0JDLE9BQU9DLE1BQVAsQ0FBYyxFQUFkLEVBQWtCYixvQkFBbEIsRUFBd0NTLFFBQXhDLENBQXRCO0FBQ0EsV0FBTztBQUNMSyx3QkFBa0JILGNBQWNWLE9BRDNCO0FBRUxjLHFCQUFlSixjQUFjVCxZQUZ4QjtBQUdMYyxxQ0FBK0JMLGNBQWNSLDRCQUh4QztBQUlMYywyQkFBcUJOLGNBQWNQLGtCQUo5QjtBQUtMYyx3QkFBa0JQLGNBQWNOLGVBTDNCO0FBTUxjLDhCQUF3QlIsY0FBY0wscUJBTmpDO0FBT0xjLDhCQUF3QlQsY0FBY0oscUJBUGpDO0FBUUxjLDBCQUFvQlYsY0FBY0g7QUFSN0IsS0FBUDtBQVVEO0FBQ0QsU0FBTyxFQUFQO0FBQ0Q7O0FBRU0sSUFBTWMsOEJBQVc7QUFDdEJDLGFBQVcsVUFEVztBQUV0QkMsazZCQUZzQjtBQUd0QnpCO0FBSHNCLENBQWpCIiwiZmlsZSI6ImluZGV4LmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGZzIGZyb20gJ2ZzJztcbmltcG9ydCBwYXRoIGZyb20gJ3BhdGgnO1xuXG4vLyBMaWdodCBzZXR0aW5ncyBhcmUgdXNlZCBpbiAzZCBtb2RlXG5jb25zdCBkZWZhdWx0TGlnaHRTZXR0aW5ncyA9IHtcbiAgZW5hYmxlZDogdHJ1ZSxcbiAgYW1iaWVudENvbG9yOiBbMjU1LCAyNTUsIDI1NV0sXG4gIHBvaW50TGlnaHRBbWJpZW50Q29lZmZpY2llbnQ6IDAuMSxcbiAgcG9pbnRMaWdodExvY2F0aW9uOiBbNDAuNDQwNiwgLTc5Ljk5NTksIDEwMDAwMDBdLFxuICBwb2ludExpZ2h0Q29sb3I6IFsyNTUsIDI1NSwgMjU1XSxcbiAgcG9pbnRMaWdodEF0dGVudWF0aW9uOiAxLjAsXG4gIG1hdGVyaWFsU3BlY3VsYXJDb2xvcjogWzI1NSwgMjU1LCAyNTVdLFxuICBtYXRlcmlhbFNoaW5pbmVzczogMVxufTtcblxuZXhwb3J0IGZ1bmN0aW9uIHVwZGF0ZVNldHRpbmdzKHtzZXR0aW5ncywgb2xkU2V0dGluZ3MgPSB7fX0pIHtcbiAgaWYgKHNldHRpbmdzICE9PSBvbGRTZXR0aW5ncykge1xuICAgIGNvbnN0IGxpZ2h0U2V0dGluZ3MgPSBPYmplY3QuYXNzaWduKHt9LCBkZWZhdWx0TGlnaHRTZXR0aW5ncywgc2V0dGluZ3MpO1xuICAgIHJldHVybiB7XG4gICAgICB1TGlnaHRpbmdFbmFibGVkOiBsaWdodFNldHRpbmdzLmVuYWJsZWQsXG4gICAgICB1QW1iaWVudENvbG9yOiBsaWdodFNldHRpbmdzLmFtYmllbnRDb2xvcixcbiAgICAgIHVQb2ludExpZ2h0QW1iaWVudENvZWZmaWNpZW50OiBsaWdodFNldHRpbmdzLnBvaW50TGlnaHRBbWJpZW50Q29lZmZpY2llbnQsXG4gICAgICB1UG9pbnRMaWdodExvY2F0aW9uOiBsaWdodFNldHRpbmdzLnBvaW50TGlnaHRMb2NhdGlvbixcbiAgICAgIHVQb2ludExpZ2h0Q29sb3I6IGxpZ2h0U2V0dGluZ3MucG9pbnRMaWdodENvbG9yLFxuICAgICAgdVBvaW50TGlnaHRBdHRlbnVhdGlvbjogbGlnaHRTZXR0aW5ncy5wb2ludExpZ2h0QXR0ZW51YXRpb24sXG4gICAgICB1TWF0ZXJpYWxTcGVjdWxhckNvbG9yOiBsaWdodFNldHRpbmdzLm1hdGVyaWFsU3BlY3VsYXJDb2xvcixcbiAgICAgIHVNYXRlcmlhbFNoaW5pbmVzczogbGlnaHRTZXR0aW5ncy5tYXRlcmlhbFNoaW5pbmVzc1xuICAgIH07XG4gIH1cbiAgcmV0dXJuIHt9O1xufVxuXG5leHBvcnQgY29uc3QgbGlnaHRpbmcgPSB7XG4gIGludGVyZmFjZTogJ2xpZ2h0aW5nJyxcbiAgc291cmNlOiBmcy5yZWFkRmlsZVN5bmMocGF0aC5qb2luKF9fZGlybmFtZSwgJ2xpZ2h0aW5nLmdsc2wnKSwgJ3V0ZjgnKSxcbiAgdXBkYXRlU2V0dGluZ3Ncbn07XG4iXX0=
