@@ -1,0 +1,67 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.pointToHexbin = pointToHexbin;
+exports.getRadiusInPixel = getRadiusInPixel;
+
+var _d3Hexbin = require('d3-hexbin');
+
+/**
+ * Use d3-hexbin to performs hexagonal binning from geo points to hexagons
+ * @param {Array} data - array of points
+ * @param {Number} radius - hexagon radius in meter
+ * @param {function} getPosition - get points lon lat
+ * @param {Object} viewport - current viewport object
+
+ * @return {Object} - hexagons and countRange
+ */
+function pointToHexbin(_ref, viewport) {
+  var data = _ref.data,
+      radius = _ref.radius,
+      getPosition = _ref.getPosition;
+
+  // get hexagon radius in mercator world unit
+  var radiusInPixel = getRadiusInPixel(radius, viewport);
+
+  // add world space coordinates to points
+  var screenPoints = data.map(function (pt) {
+    return Object.assign({
+      screenCoord: viewport.projectFlat(getPosition(pt))
+    }, pt);
+  });
+
+  var newHexbin = (0, _d3Hexbin.hexbin)().radius(radiusInPixel).x(function (d) {
+    return d.screenCoord[0];
+  }).y(function (d) {
+    return d.screenCoord[1];
+  });
+
+  var hexagonBins = newHexbin(screenPoints);
+
+  return hexagonBins.map(function (hex) {
+    return {
+      centroid: viewport.unprojectFlat([hex.x, hex.y]),
+      points: hex
+    };
+  });
+}
+
+/**
+ * Get radius in mercator world space coordinates from meter
+ * @param {Number} radius - in meter
+ * @param {Object} viewport - current viewport object
+
+ * @return {Number} radius in mercator world spcae coordinates
+ */
+function getRadiusInPixel(radius, viewport) {
+  var _viewport$getDistance = viewport.getDistanceScales(),
+      pixelsPerMeter = _viewport$getDistance.pixelsPerMeter;
+
+  // x, y distance should be the same
+
+
+  return radius * pixelsPerMeter[0];
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NyYy9sYXllcnMvY29yZS9oZXhhZ29uLWxheWVyL2hleGFnb24tYWdncmVnYXRvci5qcyJdLCJuYW1lcyI6WyJwb2ludFRvSGV4YmluIiwiZ2V0UmFkaXVzSW5QaXhlbCIsInZpZXdwb3J0IiwiZGF0YSIsInJhZGl1cyIsImdldFBvc2l0aW9uIiwicmFkaXVzSW5QaXhlbCIsInNjcmVlblBvaW50cyIsIm1hcCIsIk9iamVjdCIsImFzc2lnbiIsInNjcmVlbkNvb3JkIiwicHJvamVjdEZsYXQiLCJwdCIsIm5ld0hleGJpbiIsIngiLCJkIiwieSIsImhleGFnb25CaW5zIiwiY2VudHJvaWQiLCJ1bnByb2plY3RGbGF0IiwiaGV4IiwicG9pbnRzIiwiZ2V0RGlzdGFuY2VTY2FsZXMiLCJwaXhlbHNQZXJNZXRlciJdLCJtYXBwaW5ncyI6Ijs7Ozs7UUFXZ0JBLGEsR0FBQUEsYTtRQTZCQUMsZ0IsR0FBQUEsZ0I7O0FBeENoQjs7QUFFQTs7Ozs7Ozs7O0FBU08sU0FBU0QsYUFBVCxPQUFvREUsUUFBcEQsRUFBOEQ7QUFBQSxNQUF0Q0MsSUFBc0MsUUFBdENBLElBQXNDO0FBQUEsTUFBaENDLE1BQWdDLFFBQWhDQSxNQUFnQztBQUFBLE1BQXhCQyxXQUF3QixRQUF4QkEsV0FBd0I7O0FBQ25FO0FBQ0EsTUFBTUMsZ0JBQWdCTCxpQkFBaUJHLE1BQWpCLEVBQXlCRixRQUF6QixDQUF0Qjs7QUFFQTtBQUNBLE1BQU1LLGVBQWVKLEtBQUtLLEdBQUwsQ0FBUztBQUFBLFdBQU1DLE9BQU9DLE1BQVAsQ0FBYztBQUNoREMsbUJBQWFULFNBQVNVLFdBQVQsQ0FBcUJQLFlBQVlRLEVBQVosQ0FBckI7QUFEbUMsS0FBZCxFQUVqQ0EsRUFGaUMsQ0FBTjtBQUFBLEdBQVQsQ0FBckI7O0FBSUEsTUFBTUMsWUFBWSx3QkFDZlYsTUFEZSxDQUNSRSxhQURRLEVBRWZTLENBRmUsQ0FFYjtBQUFBLFdBQUtDLEVBQUVMLFdBQUYsQ0FBYyxDQUFkLENBQUw7QUFBQSxHQUZhLEVBR2ZNLENBSGUsQ0FHYjtBQUFBLFdBQUtELEVBQUVMLFdBQUYsQ0FBYyxDQUFkLENBQUw7QUFBQSxHQUhhLENBQWxCOztBQUtBLE1BQU1PLGNBQWNKLFVBQVVQLFlBQVYsQ0FBcEI7O0FBRUEsU0FBT1csWUFBWVYsR0FBWixDQUFnQjtBQUFBLFdBQVE7QUFDN0JXLGdCQUFVakIsU0FBU2tCLGFBQVQsQ0FBdUIsQ0FBQ0MsSUFBSU4sQ0FBTCxFQUFRTSxJQUFJSixDQUFaLENBQXZCLENBRG1CO0FBRTdCSyxjQUFRRDtBQUZxQixLQUFSO0FBQUEsR0FBaEIsQ0FBUDtBQUlEOztBQUVEOzs7Ozs7O0FBT08sU0FBU3BCLGdCQUFULENBQTBCRyxNQUExQixFQUFrQ0YsUUFBbEMsRUFBNEM7QUFBQSw4QkFFeEJBLFNBQVNxQixpQkFBVCxFQUZ3QjtBQUFBLE1BRTFDQyxjQUYwQyx5QkFFMUNBLGNBRjBDOztBQUlqRDs7O0FBQ0EsU0FBT3BCLFNBQVNvQixlQUFlLENBQWYsQ0FBaEI7QUFDRCIsImZpbGUiOiJoZXhhZ29uLWFnZ3JlZ2F0b3IuanMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge2hleGJpbn0gZnJvbSAnZDMtaGV4YmluJztcblxuLyoqXG4gKiBVc2UgZDMtaGV4YmluIHRvIHBlcmZvcm1zIGhleGFnb25hbCBiaW5uaW5nIGZyb20gZ2VvIHBvaW50cyB0byBoZXhhZ29uc1xuICogQHBhcmFtIHtBcnJheX0gZGF0YSAtIGFycmF5IG9mIHBvaW50c1xuICogQHBhcmFtIHtOdW1iZXJ9IHJhZGl1cyAtIGhleGFnb24gcmFkaXVzIGluIG1ldGVyXG4gKiBAcGFyYW0ge2Z1bmN0aW9ufSBnZXRQb3NpdGlvbiAtIGdldCBwb2ludHMgbG9uIGxhdFxuICogQHBhcmFtIHtPYmplY3R9IHZpZXdwb3J0IC0gY3VycmVudCB2aWV3cG9ydCBvYmplY3RcblxuICogQHJldHVybiB7T2JqZWN0fSAtIGhleGFnb25zIGFuZCBjb3VudFJhbmdlXG4gKi9cbmV4cG9ydCBmdW5jdGlvbiBwb2ludFRvSGV4YmluKHtkYXRhLCByYWRpdXMsIGdldFBvc2l0aW9ufSwgdmlld3BvcnQpIHtcbiAgLy8gZ2V0IGhleGFnb24gcmFkaXVzIGluIG1lcmNhdG9yIHdvcmxkIHVuaXRcbiAgY29uc3QgcmFkaXVzSW5QaXhlbCA9IGdldFJhZGl1c0luUGl4ZWwocmFkaXVzLCB2aWV3cG9ydCk7XG5cbiAgLy8gYWRkIHdvcmxkIHNwYWNlIGNvb3JkaW5hdGVzIHRvIHBvaW50c1xuICBjb25zdCBzY3JlZW5Qb2ludHMgPSBkYXRhLm1hcChwdCA9PiBPYmplY3QuYXNzaWduKHtcbiAgICBzY3JlZW5Db29yZDogdmlld3BvcnQucHJvamVjdEZsYXQoZ2V0UG9zaXRpb24ocHQpKVxuICB9LCBwdCkpO1xuXG4gIGNvbnN0IG5ld0hleGJpbiA9IGhleGJpbigpXG4gICAgLnJhZGl1cyhyYWRpdXNJblBpeGVsKVxuICAgIC54KGQgPT4gZC5zY3JlZW5Db29yZFswXSlcbiAgICAueShkID0+IGQuc2NyZWVuQ29vcmRbMV0pO1xuXG4gIGNvbnN0IGhleGFnb25CaW5zID0gbmV3SGV4YmluKHNjcmVlblBvaW50cyk7XG5cbiAgcmV0dXJuIGhleGFnb25CaW5zLm1hcChoZXggPT4gKHtcbiAgICBjZW50cm9pZDogdmlld3BvcnQudW5wcm9qZWN0RmxhdChbaGV4LngsIGhleC55XSksXG4gICAgcG9pbnRzOiBoZXhcbiAgfSkpO1xufVxuXG4vKipcbiAqIEdldCByYWRpdXMgaW4gbWVyY2F0b3Igd29ybGQgc3BhY2UgY29vcmRpbmF0ZXMgZnJvbSBtZXRlclxuICogQHBhcmFtIHtOdW1iZXJ9IHJhZGl1cyAtIGluIG1ldGVyXG4gKiBAcGFyYW0ge09iamVjdH0gdmlld3BvcnQgLSBjdXJyZW50IHZpZXdwb3J0IG9iamVjdFxuXG4gKiBAcmV0dXJuIHtOdW1iZXJ9IHJhZGl1cyBpbiBtZXJjYXRvciB3b3JsZCBzcGNhZSBjb29yZGluYXRlc1xuICovXG5leHBvcnQgZnVuY3Rpb24gZ2V0UmFkaXVzSW5QaXhlbChyYWRpdXMsIHZpZXdwb3J0KSB7XG5cbiAgY29uc3Qge3BpeGVsc1Blck1ldGVyfSA9IHZpZXdwb3J0LmdldERpc3RhbmNlU2NhbGVzKCk7XG5cbiAgLy8geCwgeSBkaXN0YW5jZSBzaG91bGQgYmUgdGhlIHNhbWVcbiAgcmV0dXJuIHJhZGl1cyAqIHBpeGVsc1Blck1ldGVyWzBdO1xufVxuIl19

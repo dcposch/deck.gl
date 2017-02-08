@@ -1,0 +1,27 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2016 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+exports.default = "#define SHADER_NAME polygon-layer-vertex-shader\n\nattribute vec3 positions;\nattribute vec3 normals;\nattribute vec4 colors;\nattribute vec3 pickingColors;\n\nuniform float extruded;\nuniform float opacity;\n\nuniform float renderPickingBuffer;\nuniform vec3 selectedPickingColor;\n\n// PICKING\nuniform float pickingEnabled;\nvarying vec4 vPickingColor;\n\nvoid main(void) {\n  vec4 position_worldspace = vec4(project_position(positions), 1.0);\n  gl_Position = project_to_clipspace(position_worldspace);\n\n  if (pickingEnabled < 0.5) {\n    float lightWeight = 1.0;\n\n    if (extruded > 0.5) {\n      lightWeight = getLightWeight(\n        position_worldspace,\n        normals\n      );\n    }\n\n    vec3 lightWeightedColor = lightWeight * colors.rgb;\n    vec4 color = vec4(lightWeightedColor, colors.a * opacity) / 255.0;\n\n    vPickingColor = color;\n\n  } else {\n    vPickingColor = vec4(pickingColors.rgb / 255.0, 1.0);\n  }\n}\n";
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NyYy9sYXllcnMvY29yZS9zb2xpZC1wb2x5Z29uLWxheWVyL3NvbGlkLXBvbHlnb24tbGF5ZXItdmVydGV4Lmdsc2wuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsImZpbGUiOiJzb2xpZC1wb2x5Z29uLWxheWVyLXZlcnRleC5nbHNsLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQ29weXJpZ2h0IChjKSAyMDE2IFViZXIgVGVjaG5vbG9naWVzLCBJbmMuXG4vL1xuLy8gUGVybWlzc2lvbiBpcyBoZXJlYnkgZ3JhbnRlZCwgZnJlZSBvZiBjaGFyZ2UsIHRvIGFueSBwZXJzb24gb2J0YWluaW5nIGEgY29weVxuLy8gb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgXCJTb2Z0d2FyZVwiKSwgdG8gZGVhbFxuLy8gaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0c1xuLy8gdG8gdXNlLCBjb3B5LCBtb2RpZnksIG1lcmdlLCBwdWJsaXNoLCBkaXN0cmlidXRlLCBzdWJsaWNlbnNlLCBhbmQvb3Igc2VsbFxuLy8gY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdob20gdGhlIFNvZnR3YXJlIGlzXG4vLyBmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOlxuLy9cbi8vIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIHNoYWxsIGJlIGluY2x1ZGVkIGluXG4vLyBhbGwgY29waWVzIG9yIHN1YnN0YW50aWFsIHBvcnRpb25zIG9mIHRoZSBTb2Z0d2FyZS5cbi8vXG4vLyBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgXCJBUyBJU1wiLCBXSVRIT1VUIFdBUlJBTlRZIE9GIEFOWSBLSU5ELCBFWFBSRVNTIE9SXG4vLyBJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSxcbi8vIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFIEFORCBOT05JTkZSSU5HRU1FTlQuIElOIE5PIEVWRU5UIFNIQUxMIFRIRVxuLy8gQVVUSE9SUyBPUiBDT1BZUklHSFQgSE9MREVSUyBCRSBMSUFCTEUgRk9SIEFOWSBDTEFJTSwgREFNQUdFUyBPUiBPVEhFUlxuLy8gTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSxcbi8vIE9VVCBPRiBPUiBJTiBDT05ORUNUSU9OIFdJVEggVEhFIFNPRlRXQVJFIE9SIFRIRSBVU0UgT1IgT1RIRVIgREVBTElOR1MgSU5cbi8vIFRIRSBTT0ZUV0FSRS5cblxuZXhwb3J0IGRlZmF1bHQgYFxcXG4jZGVmaW5lIFNIQURFUl9OQU1FIHBvbHlnb24tbGF5ZXItdmVydGV4LXNoYWRlclxuXG5hdHRyaWJ1dGUgdmVjMyBwb3NpdGlvbnM7XG5hdHRyaWJ1dGUgdmVjMyBub3JtYWxzO1xuYXR0cmlidXRlIHZlYzQgY29sb3JzO1xuYXR0cmlidXRlIHZlYzMgcGlja2luZ0NvbG9ycztcblxudW5pZm9ybSBmbG9hdCBleHRydWRlZDtcbnVuaWZvcm0gZmxvYXQgb3BhY2l0eTtcblxudW5pZm9ybSBmbG9hdCByZW5kZXJQaWNraW5nQnVmZmVyO1xudW5pZm9ybSB2ZWMzIHNlbGVjdGVkUGlja2luZ0NvbG9yO1xuXG4vLyBQSUNLSU5HXG51bmlmb3JtIGZsb2F0IHBpY2tpbmdFbmFibGVkO1xudmFyeWluZyB2ZWM0IHZQaWNraW5nQ29sb3I7XG5cbnZvaWQgbWFpbih2b2lkKSB7XG4gIHZlYzQgcG9zaXRpb25fd29ybGRzcGFjZSA9IHZlYzQocHJvamVjdF9wb3NpdGlvbihwb3NpdGlvbnMpLCAxLjApO1xuICBnbF9Qb3NpdGlvbiA9IHByb2plY3RfdG9fY2xpcHNwYWNlKHBvc2l0aW9uX3dvcmxkc3BhY2UpO1xuXG4gIGlmIChwaWNraW5nRW5hYmxlZCA8IDAuNSkge1xuICAgIGZsb2F0IGxpZ2h0V2VpZ2h0ID0gMS4wO1xuXG4gICAgaWYgKGV4dHJ1ZGVkID4gMC41KSB7XG4gICAgICBsaWdodFdlaWdodCA9IGdldExpZ2h0V2VpZ2h0KFxuICAgICAgICBwb3NpdGlvbl93b3JsZHNwYWNlLFxuICAgICAgICBub3JtYWxzXG4gICAgICApO1xuICAgIH1cblxuICAgIHZlYzMgbGlnaHRXZWlnaHRlZENvbG9yID0gbGlnaHRXZWlnaHQgKiBjb2xvcnMucmdiO1xuICAgIHZlYzQgY29sb3IgPSB2ZWM0KGxpZ2h0V2VpZ2h0ZWRDb2xvciwgY29sb3JzLmEgKiBvcGFjaXR5KSAvIDI1NS4wO1xuXG4gICAgdlBpY2tpbmdDb2xvciA9IGNvbG9yO1xuXG4gIH0gZWxzZSB7XG4gICAgdlBpY2tpbmdDb2xvciA9IHZlYzQocGlja2luZ0NvbG9ycy5yZ2IgLyAyNTUuMCwgMS4wKTtcbiAgfVxufVxuYDtcbiJdfQ==

@@ -1,0 +1,27 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// Copyright (c) 2015 Uber Technologies, Inc.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+exports.default = "#define SHADER_NAME scatterplot-layer-fragment-shader\n\n#ifdef GL_ES\nprecision highp float;\n#endif\n\nuniform float opacity;\nuniform float renderPickingBuffer;\nuniform sampler2D iconsTexture;\n\nvarying float vColorMode;\nvarying vec4 vColor;\nvarying vec2 vTextureCoords;\n\nconst float MIN_ALPHA = 0.05;\n\nvoid main(void) {\n  vec4 texColor = texture2D(iconsTexture, vTextureCoords);\n\n  // if colorMode == 0, use pixel color from the texture\n  // if colorMode == 1 or rendering picking buffer, use texture as transparency mask\n  vec3 color = mix(texColor.rgb, vColor.rgb,\n    max(vColorMode, renderPickingBuffer)\n  );\n  float a = texColor.a * opacity * mix(1.0, vColor.a, vColorMode);\n\n  if (a < MIN_ALPHA) {\n    discard;\n  }\n\n  // if rendering to screen, use mixed alpha\n  // if rendering picking buffer, use binary alpha\n  a = mix(a, 1.0, renderPickingBuffer);\n\n  gl_FragColor = vec4(color, a);\n}\n";
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NyYy9sYXllcnMvY29yZS9pY29uLWxheWVyL2ljb24tbGF5ZXItZnJhZ21lbnQuZ2xzbC5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7OztBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBIiwiZmlsZSI6Imljb24tbGF5ZXItZnJhZ21lbnQuZ2xzbC5qcyIsInNvdXJjZXNDb250ZW50IjpbIi8vIENvcHlyaWdodCAoYykgMjAxNSBVYmVyIFRlY2hub2xvZ2llcywgSW5jLlxuLy9cbi8vIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhIGNvcHlcbi8vIG9mIHRoaXMgc29mdHdhcmUgYW5kIGFzc29jaWF0ZWQgZG9jdW1lbnRhdGlvbiBmaWxlcyAodGhlIFwiU29mdHdhcmVcIiksIHRvIGRlYWxcbi8vIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uIHRoZSByaWdodHNcbi8vIHRvIHVzZSwgY29weSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlzaCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yIHNlbGxcbi8vIGNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpc1xuLy8gZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRoZSBmb2xsb3dpbmcgY29uZGl0aW9uczpcbi8vXG4vLyBUaGUgYWJvdmUgY29weXJpZ2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZSBpbmNsdWRlZCBpblxuLy8gYWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuXG4vL1xuLy8gVEhFIFNPRlRXQVJFIElTIFBST1ZJREVEIFwiQVMgSVNcIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUlxuLy8gSU1QTElFRCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUyBPRiBNRVJDSEFOVEFCSUxJVFksXG4vLyBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQgTk9OSU5GUklOR0VNRU5ULiBJTiBOTyBFVkVOVCBTSEFMTCBUSEVcbi8vIEFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVJcbi8vIExJQUJJTElUWSwgV0hFVEhFUiBJTiBBTiBBQ1RJT04gT0YgQ09OVFJBQ1QsIFRPUlQgT1IgT1RIRVJXSVNFLCBBUklTSU5HIEZST00sXG4vLyBPVVQgT0YgT1IgSU4gQ09OTkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SIE9USEVSIERFQUxJTkdTIElOXG4vLyBUSEUgU09GVFdBUkUuXG5cbmV4cG9ydCBkZWZhdWx0IGBcXFxuI2RlZmluZSBTSEFERVJfTkFNRSBzY2F0dGVycGxvdC1sYXllci1mcmFnbWVudC1zaGFkZXJcblxuI2lmZGVmIEdMX0VTXG5wcmVjaXNpb24gaGlnaHAgZmxvYXQ7XG4jZW5kaWZcblxudW5pZm9ybSBmbG9hdCBvcGFjaXR5O1xudW5pZm9ybSBmbG9hdCByZW5kZXJQaWNraW5nQnVmZmVyO1xudW5pZm9ybSBzYW1wbGVyMkQgaWNvbnNUZXh0dXJlO1xuXG52YXJ5aW5nIGZsb2F0IHZDb2xvck1vZGU7XG52YXJ5aW5nIHZlYzQgdkNvbG9yO1xudmFyeWluZyB2ZWMyIHZUZXh0dXJlQ29vcmRzO1xuXG5jb25zdCBmbG9hdCBNSU5fQUxQSEEgPSAwLjA1O1xuXG52b2lkIG1haW4odm9pZCkge1xuICB2ZWM0IHRleENvbG9yID0gdGV4dHVyZTJEKGljb25zVGV4dHVyZSwgdlRleHR1cmVDb29yZHMpO1xuXG4gIC8vIGlmIGNvbG9yTW9kZSA9PSAwLCB1c2UgcGl4ZWwgY29sb3IgZnJvbSB0aGUgdGV4dHVyZVxuICAvLyBpZiBjb2xvck1vZGUgPT0gMSBvciByZW5kZXJpbmcgcGlja2luZyBidWZmZXIsIHVzZSB0ZXh0dXJlIGFzIHRyYW5zcGFyZW5jeSBtYXNrXG4gIHZlYzMgY29sb3IgPSBtaXgodGV4Q29sb3IucmdiLCB2Q29sb3IucmdiLFxuICAgIG1heCh2Q29sb3JNb2RlLCByZW5kZXJQaWNraW5nQnVmZmVyKVxuICApO1xuICBmbG9hdCBhID0gdGV4Q29sb3IuYSAqIG9wYWNpdHkgKiBtaXgoMS4wLCB2Q29sb3IuYSwgdkNvbG9yTW9kZSk7XG5cbiAgaWYgKGEgPCBNSU5fQUxQSEEpIHtcbiAgICBkaXNjYXJkO1xuICB9XG5cbiAgLy8gaWYgcmVuZGVyaW5nIHRvIHNjcmVlbiwgdXNlIG1peGVkIGFscGhhXG4gIC8vIGlmIHJlbmRlcmluZyBwaWNraW5nIGJ1ZmZlciwgdXNlIGJpbmFyeSBhbHBoYVxuICBhID0gbWl4KGEsIDEuMCwgcmVuZGVyUGlja2luZ0J1ZmZlcik7XG5cbiAgZ2xfRnJhZ0NvbG9yID0gdmVjNChjb2xvciwgYSk7XG59XG5gO1xuIl19
